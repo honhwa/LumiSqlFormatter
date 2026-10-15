@@ -110,6 +110,9 @@ namespace LumiSqlFormatter.UI.ViewModels
                 {
                     OnPropertyChanged(nameof(SnippetEditorBackground));
                     OnPropertyChanged(nameof(SnippetEditorForeground));
+                    OnPropertyChanged(nameof(PreviewBackground));
+                    OnPropertyChanged(nameof(PreviewForeground));
+                    OnPropertyChanged(nameof(PreviewBorderBrush));
                 }
             }
         }
@@ -118,6 +121,10 @@ namespace LumiSqlFormatter.UI.ViewModels
 
         public string SnippetEditorBackground => SnippetTheme == SnippetTheme.Light ? "#FFFFFF" : "#1E1E1E";
         public string SnippetEditorForeground => SnippetTheme == SnippetTheme.Light ? "#111111" : "#D4D4D4";
+
+        public string PreviewBackground => SnippetTheme == SnippetTheme.Light ? "#FFFFFF" : "#1E1E1E";
+        public string PreviewForeground => SnippetTheme == SnippetTheme.Light ? "#111111" : "#D4D4D4";
+        public string PreviewBorderBrush => SnippetTheme == SnippetTheme.Light ? "#CCCCCC" : "#3F3F46";
 
         public string PreviewSql
         {

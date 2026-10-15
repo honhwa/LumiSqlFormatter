@@ -22,7 +22,7 @@
             <!-- Header -->
             <Border x:Name="HeaderBorder" Grid.Row="0" Background="#1E88E5" Padding="6,4">
                 <DockPanel>
-                    <TextBlock x:Name="HeaderTitle" Text="⚡ Lumi SQL Snippets" FontWeight="SemiBold" Foreground="White" FontSize="11"/>
+                    <TextBlock x:Name="HeaderTitle" Text="Lumi SQL Snippets" FontWeight="SemiBold" Foreground="White" FontSize="11"/>
                     <TextBlock x:Name="HeaderHint" Text="Tab / Enter để chọn  •  Esc để đóng" HorizontalAlignment="Right" Foreground="#E3F2FD" FontSize="10"/>
                 </DockPanel>
             </Border>

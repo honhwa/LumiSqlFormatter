@@ -33,5 +33,24 @@ namespace LumiSqlFormatter.UI.Views
                 }
             };
         }
+
+        private void InsertCursor_Click(object sender, RoutedEventArgs e)
+        {
+            if (BodyTextBox != null)
+            {
+                int insertIndex = BodyTextBox.SelectionStart;
+                string text = BodyTextBox.Text ?? string.Empty;
+                if (insertIndex < 0) insertIndex = 0;
+                if (insertIndex > text.Length) insertIndex = text.Length;
+
+                const string cursorTag = "$CURSOR$";
+                BodyTextBox.SelectedText = cursorTag;
+                BodyTextBox.SelectionLength = 0;
+                BodyTextBox.SelectionStart = insertIndex + cursorTag.Length;
+
+                BodyTextBox.Focus();
+                Keyboard.Focus(BodyTextBox);
+            }
+        }
     }
 }

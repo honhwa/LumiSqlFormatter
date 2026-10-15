@@ -1,10 +1,16 @@
 using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Threading;
+using LumiSqlFormatter.Models;
+using LumiSqlFormatter.Services;
 using LumiSqlFormatter.UI.ViewModels;
 
 namespace LumiSqlFormatter.UI.Views
@@ -46,6 +52,7 @@ namespace LumiSqlFormatter.UI.Views
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             GetHwndSource();
+            UpdatePreviewHighlighter();
         }
 
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -53,6 +60,7 @@ namespace LumiSqlFormatter.UI.Views
             if (e.OldValue is SettingsViewModel oldVm)
             {
                 oldVm.SnippetAdded -= OnSnippetAdded;
+                oldVm.PropertyChanged -= OnViewModelPropertyChanged;
             }
             if (e.NewValue is SettingsViewModel newVm)
             {
@@ -66,6 +74,22 @@ namespace LumiSqlFormatter.UI.Views
             {
                 vm.SnippetAdded -= OnSnippetAdded;
                 vm.SnippetAdded += OnSnippetAdded;
+                vm.PropertyChanged -= OnViewModelPropertyChanged;
+                vm.PropertyChanged += OnViewModelPropertyChanged;
+                UpdatePreviewHighlighter();
+            }
+        }
+
+        private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(SettingsViewModel.PreviewSql) ||
+                e.PropertyName == nameof(SettingsViewModel.SnippetTheme) ||
+                e.PropertyName == nameof(SettingsViewModel.EnableAutoCapitalize) ||
+                e.PropertyName == nameof(SettingsViewModel.KeywordCasing) ||
+                e.PropertyName == nameof(SettingsViewModel.DataTypeCasing) ||
+                e.PropertyName == nameof(SettingsViewModel.FunctionCasing))
+            {
+                UpdatePreviewHighlighter();
             }
         }
 
@@ -192,6 +216,166 @@ namespace LumiSqlFormatter.UI.Views
                 }
             }
             return IntPtr.Zero;
+        }
+
+        private void InsertCursor_Click(object sender, RoutedEventArgs e)
+        {
+            EnsureWin32Focus();
+            if (TemplateTextBox != null)
+            {
+                int insertIndex = TemplateTextBox.SelectionStart;
+                string text = TemplateTextBox.Text ?? string.Empty;
+                if (insertIndex < 0) insertIndex = 0;
+                if (insertIndex > text.Length) insertIndex = text.Length;
+
+                const string cursorTag = "$CURSOR$";
+                TemplateTextBox.SelectedText = cursorTag;
+                TemplateTextBox.SelectionLength = 0;
+                TemplateTextBox.SelectionStart = insertIndex + cursorTag.Length;
+
+                TemplateTextBox.Focus();
+                Keyboard.Focus(TemplateTextBox);
+            }
+        }
+
+        private static readonly Regex SqlTokenRegex = new Regex(
+            @"(?<comment>--[^\r\n]*)" +
+            @"|(?<string>'([^']|'')*')" +
+            @"|(?<bracket>\[[^\]]*\])" +
+            @"|(?<number>\b\d+(\.\d+)?\b)" +
+            @"|(?<word>[A-Za-z_@#][A-Za-z0-9_@#]*)" +
+            @"|(?<other>[^\sA-Za-z0-9_@#]+)",
+            RegexOptions.Compiled);
+
+        public void UpdatePreviewHighlighter()
+        {
+            if (PreviewRichTextBox == null || !(DataContext is SettingsViewModel vm))
+                return;
+
+            bool isDark = vm.SnippetTheme == SnippetTheme.Dark;
+            var doc = CreateSyntaxHighlightedDocument(vm.PreviewSql, isDark);
+            PreviewRichTextBox.Document = doc;
+        }
+
+        private static FlowDocument CreateSyntaxHighlightedDocument(string sql, bool isDark)
+        {
+            var doc = new FlowDocument
+            {
+                PagePadding = new Thickness(0),
+                Background = Brushes.Transparent
+            };
+
+            var defaultBrush = new SolidColorBrush(isDark ? Color.FromRgb(212, 212, 212) : Color.FromRgb(30, 30, 30));
+            var commentBrush = new SolidColorBrush(isDark ? Color.FromRgb(106, 153, 85) : Color.FromRgb(0, 128, 0));
+            var stringBrush = new SolidColorBrush(isDark ? Color.FromRgb(206, 145, 120) : Color.FromRgb(163, 21, 21));
+            var keywordBrush = new SolidColorBrush(isDark ? Color.FromRgb(86, 156, 214) : Color.FromRgb(0, 0, 255));
+            var dataTypeBrush = new SolidColorBrush(isDark ? Color.FromRgb(78, 201, 176) : Color.FromRgb(38, 127, 153));
+            var functionBrush = new SolidColorBrush(isDark ? Color.FromRgb(220, 220, 170) : Color.FromRgb(121, 94, 38));
+            var numberBrush = new SolidColorBrush(isDark ? Color.FromRgb(181, 206, 168) : Color.FromRgb(9, 134, 88));
+            var bracketBrush = new SolidColorBrush(isDark ? Color.FromRgb(220, 220, 220) : Color.FromRgb(40, 40, 40));
+
+            defaultBrush.Freeze();
+            commentBrush.Freeze();
+            stringBrush.Freeze();
+            keywordBrush.Freeze();
+            dataTypeBrush.Freeze();
+            functionBrush.Freeze();
+            numberBrush.Freeze();
+            bracketBrush.Freeze();
+
+            var paragraph = new Paragraph { Margin = new Thickness(0), LineHeight = 20 };
+
+            if (string.IsNullOrEmpty(sql))
+            {
+                doc.Blocks.Add(paragraph);
+                return doc;
+            }
+
+            string[] lines = sql.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string line = lines[i];
+                if (line.TrimStart().StartsWith("--"))
+                {
+                    paragraph.Inlines.Add(new Run(line) { Foreground = commentBrush });
+                }
+                else
+                {
+                    int lastIndex = 0;
+                    var matches = SqlTokenRegex.Matches(line);
+                    foreach (Match match in matches)
+                    {
+                        if (match.Index > lastIndex)
+                        {
+                            string ws = line.Substring(lastIndex, match.Index - lastIndex);
+                            paragraph.Inlines.Add(new Run(ws) { Foreground = defaultBrush });
+                        }
+
+                        string value = match.Value;
+                        if (match.Groups["comment"].Success)
+                        {
+                            paragraph.Inlines.Add(new Run(value) { Foreground = commentBrush });
+                        }
+                        else if (match.Groups["string"].Success)
+                        {
+                            paragraph.Inlines.Add(new Run(value) { Foreground = stringBrush });
+                        }
+                        else if (match.Groups["bracket"].Success)
+                        {
+                            paragraph.Inlines.Add(new Run(value) { Foreground = bracketBrush });
+                        }
+                        else if (match.Groups["number"].Success)
+                        {
+                            paragraph.Inlines.Add(new Run(value) { Foreground = numberBrush });
+                        }
+                        else if (match.Groups["word"].Success)
+                        {
+                            if (SqlTokenParsingService.Instance.TryGetWordInfo(value, out var cat, out _))
+                            {
+                                switch (cat)
+                                {
+                                    case SqlWordCategory.ReservedKeyword:
+                                        paragraph.Inlines.Add(new Run(value) { Foreground = keywordBrush, FontWeight = FontWeights.SemiBold });
+                                        break;
+                                    case SqlWordCategory.DataType:
+                                        paragraph.Inlines.Add(new Run(value) { Foreground = dataTypeBrush });
+                                        break;
+                                    case SqlWordCategory.BuiltInFunction:
+                                        paragraph.Inlines.Add(new Run(value) { Foreground = functionBrush });
+                                        break;
+                                    default:
+                                        paragraph.Inlines.Add(new Run(value) { Foreground = defaultBrush });
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                paragraph.Inlines.Add(new Run(value) { Foreground = defaultBrush });
+                            }
+                        }
+                        else
+                        {
+                            paragraph.Inlines.Add(new Run(value) { Foreground = defaultBrush });
+                        }
+
+                        lastIndex = match.Index + match.Length;
+                    }
+
+                    if (lastIndex < line.Length)
+                    {
+                        string trailing = line.Substring(lastIndex);
+                        paragraph.Inlines.Add(new Run(trailing) { Foreground = defaultBrush });
+                    }
+                }
+
+                if (i < lines.Length - 1)
+                {
+                    paragraph.Inlines.Add(new LineBreak());
+                }
+            }
+
+            doc.Blocks.Add(paragraph);
+            return doc;
         }
     }
 }

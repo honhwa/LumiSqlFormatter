@@ -1,16 +1,16 @@
-# ⚡ HƯỚNG DẪN SỬ DỤNG & TÀI LIỆU KỸ THUẬT TOÀN DIỆN
+# HƯỚNG DẪN SỬ DỤNG & TÀI LIỆU KỸ THUẬT TOÀN DIỆN
 # LUMI SQL FORMATTER & SMART SNIPPETS (PHONGNT)
 
-> **Phiên bản:** 1.1.2  
+> **Phiên bản:** 1.1.3  
 > **Tác giả:** PHONGNT  
 > **Dự án:** `LumiSqlFormatter.Extension.2026`  
 > **Môi trường hỗ trợ:** SQL Server Management Studio (SSMS 18, 19, 20, 22+ x64)
 
 ---
 
-## 📖 MỤC LỤC
+## MỤC LỤC
 1. [Giới thiệu tổng quan](#1-giới-thiệu-tổng-quan)
-2. [Hướng dẫn cài đặt nhanh](#2-hướng-dẫn-cài-đặt-nhanh)
+2. [Hướng dẫn cài đặt qua file .VSIX](#2-hướng-dẫn-cài-đặt-qua-file-vsix)
 3. [Tự động viết hoa từ khóa (Real-time Auto-Capitalize)](#3-tự-động-viết-hoa-từ-khóa-real-time-auto-capitalize)
    - 3.1. Các chế độ định dạng Casing
    - 3.2. Cơ chế loại trừ đa dòng thông minh (Strict Multi-line Exclusions)
@@ -21,7 +21,7 @@
    - 4.2. Gợi ý tự động khi gõ (IntelliSense Suggestion Popup)
    - 4.3. Tạo nhanh Snippet từ Editor (`Ctrl + Alt + S`)
    - 4.4. Trình quản lý chi tiết trong Tools -> Options (Lưới 3 dòng, Theme Sáng/Tối)
-5. [Hướng dẫn gỡ cài đặt sạch sẽ (Clean Uninstall)](#5-hướng-dẫn-gỡ-cài-đặt-sạch-sẽ-clean-uninstall)
+5. [Hướng dẫn gỡ cài đặt (Uninstall)](#5-hướng-dẫn-gỡ-cài-đặt-uninstall)
 6. [Cấu trúc kỹ thuật của dự án](#6-cấu-trúc-kỹ-thuật-của-dự-án)
 7. [Nhật ký cập nhật các phiên bản (Changelog)](#7-nhật-ký-cập-nhật-các-phiên-bản-changelog)
 
@@ -31,35 +31,28 @@
 
 **Lumi SQL Formatter (PHONGNT)** là tiện ích mở rộng (extension) chuyên nghiệp dành cho SQL Server Management Studio (SSMS), mang lại trải nghiệm viết mã T-SQL hiện đại, chuẩn chỉ, lấy cảm hứng từ các tính năng cốt lõi của **Redgate SQL Prompt**:
 
-- 🔠 **Tự động viết hoa từ khóa thời gian thực (Real-time Auto-Capitalize):** Tự động chuẩn hóa chữ hoa/chữ thường cho Keywords, Data Types và Built-in Functions ngay khi gõ phím cách (`Space`), `Enter`, `Tab`, phẩy (`,`), chấm phẩy (`;`), hoặc đóng ngoặc (`)`).
-- 🛡 **Loại trừ ngữ cảnh đa dòng chính xác tuyệt đối (Strict Multi-line Exclusions):** Sử dụng bộ phân tích từ vựng (Lexical State Machine) quét trực tiếp trên Buffer Snapshot, nhận diện chính xác chuỗi ký tự nhiều dòng, chú thích lồng nhau, định danh trong ngoặc vuông và nháy kép.
-- 🎯 **Bảo vệ biến T-SQL:** Biến cục bộ có tiền tố `@` (như `@Year`, `@Date`, `@Status`) và bảng tạm `#` (như `#Year`) không bao giờ bị viết hoa nhầm thành từ khóa SQL.
-- ⚡ **Snippet Engine thông minh:** Gợi ý tức thì (suggestion popup), mở rộng mã mẫu bằng phím `Tab` hoặc `Enter`, hỗ trợ con trỏ `$CURSOR$`.
-- 📁 **Thư mục Snippet tùy biến (Redgate-style):** Mỗi snippet được lưu thành file `{prefix}.json` riêng lẻ trong thư mục bạn chỉ định, dễ dàng đồng bộ qua Git/OneDrive.
-- ⚙ **Tích hợp sâu vào SSMS:** Quản trị cấu hình toàn diện tại menu **Tools -> Options -> Lumi SQL Formatter** (hỗ trợ full-screen, lưới 3 dòng tối ưu không gian, giao diện Dark/Light mode).
+- **Tự động viết hoa từ khóa thời gian thực (Real-time Auto-Capitalize):** Tự động chuẩn hóa chữ hoa/chữ thường cho Keywords, Data Types và Built-in Functions ngay khi gõ phím cách (`Space`), `Enter`, `Tab`, phẩy (`,`), chấm phẩy (`;`), hoặc đóng ngoặc (`)`).
+- **Loại trừ ngữ cảnh đa dòng chính xác tuyệt đối (Strict Multi-line Exclusions):** Sử dụng bộ phân tích từ vựng (Lexical State Machine) quét trực tiếp trên Buffer Snapshot, nhận diện chính xác chuỗi ký tự nhiều dòng, chú thích lồng nhau, định danh trong ngoặc vuông và nháy kép.
+- **Bảo vệ biến T-SQL:** Biến cục bộ có tiền tố `@` (như `@Year`, `@Date`, `@Status`) và bảng tạm `#` (như `#Year`) không bao giờ bị viết hoa nhầm thành từ khóa SQL.
+- **Snippet Engine thông minh:** Gợi ý tức thì (suggestion popup), mở rộng mã mẫu bằng phím `Tab` hoặc `Enter`, hỗ trợ con trỏ `$CURSOR$`.
+- **Thư mục Snippet tùy biến (Redgate-style):** Mỗi snippet được lưu thành file `{prefix}.json` riêng lẻ trong thư mục bạn chỉ định, dễ dàng đồng bộ qua Git/OneDrive.
+- **Tích hợp sâu vào SSMS:** Quản trị cấu hình toàn diện tại menu **Tools -> Options -> Lumi SQL Formatter** (hỗ trợ full-screen, lưới 3 dòng tối ưu không gian, giao diện Dark/Light mode, phong cách enterprise chuẩn mực).
 
 ---
 
-## 2. HƯỚNG DẪN CÀI ĐẶT NHANH
+## 2. HƯỚNG DẪN CÀI ĐẶT QUA FILE .VSIX
 
 Gói cài đặt VSIX được đóng gói chuẩn **VsixV2 (SSMS Isolated Shell)**, tương thích hoàn toàn với SSMS 18, 19, 20 và 22+.
 
-### Cách 1: Cài đặt trực tiếp qua file .VSIX (Khuyên dùng)
+### Các bước cài đặt:
 1. Đóng hoàn toàn các cửa sổ SSMS đang chạy.
 2. Mở thư mục chứa file cài đặt:
    ```text
    d:\LumiSqlFormatter\LumiSqlFormatter\bin\Release\LumiSqlFormatter.vsix
    ```
 3. **Nhấp đúp chuột** vào file `LumiSqlFormatter.vsix`.
-4. Trình cài đặt `VSIX Installer` sẽ hiển thị: **Lumi SQL Formatter & Snippets (PHONGNT)** -> Nhấn **Install** (hoặc **Update** nếu cài đè).
+4. Trình cài đặt `VSIX Installer` sẽ hiển thị: **Lumi SQL Formatter & Snippets (PHONGNT)** -> Nhấn **Install** (hoặc **Modify/Update** nếu cài đè).
 5. Mở lại SSMS để bắt đầu sử dụng.
-
-### Cách 2: Cài đặt tự động bằng 1-Click Script
-Chạy file script đi kèm:
-```cmd
-d:\LumiSqlFormatter\Install-To-SSMS22.bat
-```
-Script sẽ tự động đóng SSMS, giải nén VSIX vào thư mục Extensions của SSMS 22, dọn sạch ComponentModelCache và khởi tạo cấu hình.
 
 ---
 
@@ -170,11 +163,11 @@ Mỗi snippet được lưu độc lập dưới dạng một file `{prefix}.jso
 ### 4.3. Tạo nhanh Snippet từ Editor (`Ctrl + Alt + S`)
 1. Trong Query Editor, bôi đen đoạn mã SQL bạn muốn lưu làm template.
 2. Nhấn tổ hợp phím **`Ctrl + Alt + S`**.
-3. Cửa sổ **Quick Create Snippet** sẽ mở ra với đoạn code đã được điền sẵn:
+3. Cửa sổ **Tạo Snippet - Lumi SQL** sẽ mở ra với đoạn code đã được điền sẵn:
    - Nhập **Prefix** (ví dụ: `myquery`).
    - Nhập **Mô tả**.
-   - Bấm nút **📍 Chèn $CURSOR$** tại vị trí con trỏ mong muốn.
-   - Nhấn **`Enter`** hoặc bấm **💾 Lưu Snippet**.
+   - Bấm nút **Chèn $CURSOR$** tại vị trí con trỏ mong muốn.
+   - Nhấn **`Enter`** hoặc bấm **Lưu Snippet**.
 
 ---
 
@@ -182,26 +175,29 @@ Mỗi snippet được lưu độc lập dưới dạng một file `{prefix}.jso
 Vào menu **Tools** -> **Options** -> **Lumi SQL Formatter** -> tab **Snippet Manager**:
 
 - **Khắc phục triệt để lỗi nhập liệu:** Sử dụng `UIElementDialogPage` cùng bộ hook `WM_GETDLGCODE` chuyên sâu, cho phép gõ phím trực tiếp vào các ô Prefix, Mô tả và Body mà không bị chặn bởi Win32 Modal Dialog của SSMS.
-- **Lưới hiển thị đúng 3 dòng (Compact DataGrid):** Danh sách snippets được giới hạn hiển thị 3 dòng (`Height="108"`), tự động xuất hiện thanh cuộn bên trong khi có nhiều snippet, dành trọn vẹn không gian cho khung soạn thảo code chi tiết bên dưới.
+- **Lưới hiển thị cao hơn & Thanh phân tách tùy biến (Resizable DataGrid):** Ô lưới snippets có chiều cao mở rộng mặc định 190px (nhìn rõ 6-7 dòng cùng lúc), tích hợp thanh kéo **GridSplitter** cho phép người dùng tùy ý kéo giãn chiều cao lưới để xem được nhiều snippets hơn khi cần.
+- **Chèn biến `$CURSOR$` chính xác tại vị trí con trỏ:** Bấm nút **Chèn $CURSOR$** sẽ chèn ngay tại vị trí trỏ chuột / con trỏ văn bản đang đặt (hoặc thay thế đoạn bôi đen), thay vì tự động đẩy về cuối văn bản như trước.
 - **Tùy chọn Theme Sáng / Tối (Theme Mode):** Cho phép chọn chế độ **Light Mode** hoặc **Dark Mode** với độ tương phản cao, chữ sắc nét, dễ nhìn.
-- **Nút "Làm mới" (Refresh):** Bấm nút **🔄 Làm mới** để quét lại toàn bộ thư mục snippet nếu bạn vừa pull code từ Git hoặc chỉnh sửa file từ bên ngoài.
+- **Nút Làm mới:** Bấm nút **Làm mới** để quét lại toàn bộ thư mục snippet nếu bạn vừa pull code từ Git hoặc chỉnh sửa file từ bên ngoài.
 - **Mặc định không cài đặt snippet mẫu:** Hệ thống để danh sách trống để bạn hoàn toàn chủ động xây dựng bộ snippet cá nhân hoặc trỏ đến kho snippet của riêng mình.
 
 ---
 
-## 5. HƯỚNG DẪN GỠ CÀI ĐẶT SẠCH SẼ (CLEAN UNINSTALL)
+## 5. HƯỚNG DẪN GỠ CÀI ĐẶT (UNINSTALL)
 
-Nếu cần gỡ bỏ extension hoàn toàn khỏi SSMS:
-1. Đóng toàn bộ cửa sổ SSMS.
-2. Chạy file script:
-   ```cmd
-   d:\LumiSqlFormatter\Uninstall.bat
-   ```
-   *(Hoặc chạy `Uninstall.ps1` bằng PowerShell Admin)*.
-3. Script sẽ:
-   - Gỡ bỏ extension khỏi thư mục Extensions của SSMS.
-   - Xóa bộ đệm MEF ComponentModelCache.
-   - Chạy `SSMS.exe /updateconfiguration` để làm sạch thanh menu và registry.
+Bạn có thể gỡ cài đặt extension theo một trong hai cách chuẩn của SSMS:
+
+### Cách 1: Gỡ bỏ từ hộp thoại Tools -> Options (Nhanh nhất)
+1. Trong SSMS, mở menu **Tools** -> **Options**.
+2. Chọn nhánh **Lumi SQL Formatter** -> tab **Formatting & Casing**.
+3. Nhấn nút **Gỡ Cài Đặt Extension**.
+4. Xác nhận gỡ bỏ và lựa chọn có giữ lại thư mục Snippets cá nhân hay không. Hệ thống sẽ tự động dọn sạch thư viện và làm mới bộ nhớ đệm cache của SSMS.
+
+### Cách 2: Gỡ bỏ qua trình quản lý Extensions của SSMS
+1. Trong SSMS, mở menu **Extensions** -> **Manage Extensions**.
+2. Tìm **Lumi SQL Formatter & Snippets (PHONGNT)** trong danh sách đã cài đặt (Installed).
+3. Nhấn **Uninstall**.
+4. Đóng SSMS để VSIX Installer tiến hành gỡ bỏ tự động.
 
 ---
 
@@ -210,13 +206,11 @@ Nếu cần gỡ bỏ extension hoàn toàn khỏi SSMS:
 ```text
 d:\LumiSqlFormatter\
 ├── LumiSqlFormatter.sln                        # Visual Studio Solution
-├── Install-To-SSMS22.bat                       # Script cài đặt tự động vào SSMS
-├── Uninstall.bat / Uninstall.ps1               # Script gỡ cài đặt sạch 100%
 ├── HUONG_DAN_SU_DUNG.md                        # Tài liệu hướng dẫn sử dụng toàn diện
 ├── README.md                                   # Giới thiệu tổng quan dự án
 └── LumiSqlFormatter\
     ├── LumiSqlFormatter.csproj                 # Cấu hình VSSDK, SSMS References
-    ├── source.extension.vsixmanifest           # VSIX Manifest (v1.1.2 - PHONGNT)
+    ├── source.extension.vsixmanifest           # VSIX Manifest (v1.1.3 - PHONGNT)
     ├── ExtensionPackage.cs                     # AsyncPackage đăng ký Menu, ToolWindow, OptionsPage
     ├── ExtensionPackage.vsct                   # Khai báo Top-Level Menu "Lumi SQL"
     ├── PostProcessVsix.ps1                     # Script đóng gói chuẩn SSMS VsixV2
@@ -224,6 +218,7 @@ d:\LumiSqlFormatter\
     │   ├── CasingStyle.cs                      # Enum: Uppercase, Lowercase, PascalCase
     │   ├── FormatterSettings.cs                # Model cài đặt Casing & Snippets
     │   └── SnippetItem.cs                      # Model Snippet (Id, Prefix, Description, Body)
+    │   └── SnippetTheme.cs                     # Enum: Dark, Light
     ├── Services/
     │   ├── SettingsService.cs                  # Quản lý đọc/ghi JSON tại folder tùy biến
     │   ├── SqlTokenParsingService.cs           # Lexical State Scanner & 510+ tokens dictionary
@@ -235,7 +230,7 @@ d:\LumiSqlFormatter\
     │   ├── SettingsToolWindow.cs               # ToolWindow nhúng SettingsView
     │   ├── OptionsPage.cs                      # UIElementDialogPage trong Tools -> Options
     │   ├── Views/
-    │   │   ├── SettingsView.xaml (.cs)         # Giao diện chính (Lưới 3 dòng, Theme Dark/Light)
+    │   │   ├── SettingsView.xaml (.cs)         # Giao diện chính (Lưới mở rộng, GridSplitter, Theme Dark/Light)
     │   │   ├── QuickSnippetWindow.xaml (.cs)   # Modal tạo nhanh snippet từ editor (Ctrl+Alt+S)
     │   │   └── SnippetSuggestionPopup.xaml     # Popup gợi ý snippet cạnh con trỏ
     │   └── ViewModels/
@@ -243,14 +238,23 @@ d:\LumiSqlFormatter\
     │       ├── QuickSnippetViewModel.cs
     │       └── SettingsViewModel.cs            # Binding logic, CRUD snippets, Theme logic
     └── Properties/
-        └── AssemblyInfo.cs                     # Version 1.1.2.0
+        └── AssemblyInfo.cs                     # Version 1.1.3.0
 ```
 
 ---
 
 ## 7. NHẬT KÝ CẬP NHẬT CÁC PHIÊN BẢN (CHANGELOG)
 
-### 📌 Phiên bản 1.1.2 (Bản hiện tại)
+### Phiên bản 1.1.3 (Bản hiện tại)
+- **Live Preview đồng bộ Theme Light/Dark & Tô màu cú pháp (Syntax Highlighting):** Khung xem trước Live Preview nay tự động chuyển đổi nền và màu sắc theo Theme Light/Dark đã chọn, hỗ trợ tô màu cú pháp chuẩn xác (Keywords xanh dương, Data Types xanh ngọc, Functions vàng đất, Comments xanh lá, Strings đỏ tươi) giúp kiểm tra trực quan, sinh động.
+- **Hiện đại hóa giao diện cấu hình chuẩn Enterprise (Không AI, không emoji):** Thiết kế lại thanh tiêu đề với thanh chỉ thị thương hiệu và huy hiệu phiên bản sắc nét; bổ sung các thẻ badge phân loại màu sắc (`KEYWORD`, `DATA TYPE`, `FUNCTION`), phím kích hoạt dạng chip hiện đại và nút bấm đồng bộ màu sắc chuẩn mực.
+- **Mở rộng ô lưới Snippets & Hỗ trợ GridSplitter:** Chiều cao ô lưới snippets được tăng lên 190px (hiển thị 6-7 snippet cùng lúc), bổ sung thanh kéo phân tách linh hoạt giúp xem được nhiều snippets theo kích thước màn hình.
+- **Chèn `$CURSOR$` ngay tại vị trí trỏ chuột:** Sửa nút bấm "Chèn $CURSOR$" để chèn chính xác tại con trỏ văn bản / vùng bôi đen của ô soạn thảo thay vì luôn dồn xuống cuối.
+- **Loại bỏ file batch (`.bat`), hỗ trợ cài đè trực tiếp:** Toàn bộ quy trình cài đặt và nâng cấp sử dụng chuẩn VSIX Installer (`.vsix`) độc lập.
+
+---
+
+### Phiên bản 1.1.2
 - **Bổ sung từ khóa `COLUMN`:** Đã thêm vào từ điển cú pháp DDL (`ALTER TABLE ... ADD COLUMN ...`).
 - **Xử lý triệt để biến T-SQL (`@Year`):**
   - Bảo vệ các biến có tiền tố `@` (như `@Year`, `@Date`, `@Status`, `@Month`, `@Type`...) không bị tự động viết hoa nhầm thành từ khóa SQL.
@@ -262,7 +266,7 @@ d:\LumiSqlFormatter\
 
 ---
 
-### 📌 Phiên bản 1.1.1
+### Phiên bản 1.1.1
 - **Khắc phục lỗi AutoUpperCase trong chuỗi ký tự nhiều dòng (Multi-line String):**
   - Thay thế cơ chế kiểm tra từng dòng đơn lẻ bằng bộ quét **Lexical State Machine** đa dòng quét trên Buffer Snapshot.
   - Tự động nhận diện chuỗi mở kéo dài qua các ký tự xuống dòng (`\r\n`) cho đến khi gặp dấu nháy đóng hợp lệ.
@@ -272,7 +276,7 @@ d:\LumiSqlFormatter\
 
 ---
 
-### 📌 Phiên bản 1.1.0
+### Phiên bản 1.1.0
 - **Khắc phục dứt điểm lỗi không nhập liệu trong hộp thoại Options:**
   - Chuyển `OptionsPage` sang kế thừa `UIElementDialogPage` tích hợp chuẩn `IKeyboardInputSink`.
   - Xử lý thông điệp `WM_GETDLGCODE` chuyên sâu, khôi phục `TranslateMessage` để WPF TextBoxes nhận thông điệp `WM_CHAR`.
@@ -280,12 +284,12 @@ d:\LumiSqlFormatter\
 - **Tối ưu hóa giao diện Snippet:**
   - Thu gọn lưới danh sách Snippet xuống đúng 3 dòng (`Height="108"`), nhường toàn bộ không gian cho khung soạn thảo chi tiết.
   - Bổ sung tùy chọn giao diện **Light Mode / Dark Mode** với màu chữ tương phản cao, sắc nét.
-  - Đổi tên nút thành **"Làm mới" (Refresh)** để tải lại thư mục snippet.
+  - Đổi tên nút thành **"Làm mới"** để tải lại thư mục snippet.
   - Xóa toàn bộ snippet mặc định, cho phép người dùng tự quản lý danh mục riêng.
 
 ---
 
-### 📌 Phiên bản 1.0.0
+### Phiên bản 1.0.0
 - Khởi tạo dự án Lumi SQL Formatter cho SSMS 22 (x64).
 - Tự động viết hoa thời gian thực các từ khóa cơ bản.
 - Hỗ trợ lưu trữ snippet theo định dạng file JSON riêng lẻ (Redgate style).
