@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="LumiSqlFormatter.Extension.2026" Version="1.1.2" Language="en-US" Publisher="LumiSQL" />
+    <DisplayName>Lumi SQL Formatter &amp; Snippets (PHONGNT)</DisplayName>
+    <Description xml:space="preserve">Real-time SQL Auto-Capitalization (Redgate SQL Prompt style) and Smart Snippet Manager for SSMS (x64).</Description>
+    <MoreInfo>https://github.com/LumiSql/LumiSqlFormatter</MoreInfo>
+    <Tags>sql;ssms;formatter;casing;uppercase;snippets;redgate</Tags>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.SqlServer.ManagementStudio" Version="[19.0, 99.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.SQLServer.Management.Studio" Version="[14.0, 99.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="ssms" Version="[14.0, 99.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+    <InstallationTarget Id="Microsoft.VisualStudio.SSMS" Version="[14.0, 99.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+  </Installation>
+  <Dependencies />
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,)" DisplayName="Visual Studio Core Editor" />
+  </Prerequisites>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="LumiSqlFormatter" Path="|LumiSqlFormatter|" />
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="LumiSqlFormatter" Path="|LumiSqlFormatter;PkgdefProjectOutputGroup|" />
+  </Assets>
+</PackageManifest>

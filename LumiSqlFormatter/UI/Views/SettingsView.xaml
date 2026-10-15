@@ -1,0 +1,268 @@
+<UserControl x:Class="LumiSqlFormatter.UI.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewmodels="clr-namespace:LumiSqlFormatter.UI.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="650" d:DesignWidth="840"
+             Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+             Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
+             FontFamily="Segoe UI" FontSize="12"
+             PreviewMouseDown="OnUserControlPreviewMouseDown">
+
+    <UserControl.DataContext>
+        <viewmodels:SettingsViewModel />
+    </UserControl.DataContext>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Margin="0,0,0,12" Padding="10" Background="#1E88E5" CornerRadius="4">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="⚡ Lumi SQL Formatter &amp; Snippets (PHONGNT)" FontWeight="SemiBold" FontSize="16" Foreground="White" VerticalAlignment="Center"/>
+                <TextBlock Text=" (Redgate SQL Prompt Style for SSMS 22)" FontSize="12" Foreground="#E3F2FD" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Tabs -->
+        <TabControl Grid.Row="1">
+            <!-- TAB 1: CASING & FORMATTING -->
+            <TabItem Header="Formatting &amp; Casing">
+                <Grid Margin="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="350"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: Options Panel -->
+                    <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                        <GroupBox Header="Auto-Capitalization Options" Padding="10" Margin="0,0,0,12">
+                            <StackPanel>
+                                <CheckBox Content="Bật Auto-Capitalization khi gõ phím" 
+                                          IsChecked="{Binding EnableAutoCapitalize, Mode=TwoWay}"
+                                          FontWeight="SemiBold" Margin="0,0,0,12"/>
+
+                                <TextBlock Text="Reserved Keywords Casing:" FontWeight="Medium" Margin="0,4,0,2"/>
+                                <ComboBox ItemsSource="{Binding CasingStyleOptions}" 
+                                          SelectedItem="{Binding KeywordCasing, Mode=TwoWay}"
+                                          Margin="0,0,0,10" Height="26"/>
+
+                                <TextBlock Text="Built-in Data Types Casing:" FontWeight="Medium" Margin="0,4,0,2"/>
+                                <ComboBox ItemsSource="{Binding CasingStyleOptions}" 
+                                          SelectedItem="{Binding DataTypeCasing, Mode=TwoWay}"
+                                          Margin="0,0,0,10" Height="26"/>
+
+                                <TextBlock Text="Built-in Functions Casing:" FontWeight="Medium" Margin="0,4,0,2"/>
+                                <ComboBox ItemsSource="{Binding CasingStyleOptions}" 
+                                          SelectedItem="{Binding FunctionCasing, Mode=TwoWay}"
+                                          Margin="0,0,0,10" Height="26"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Snippet Options" Padding="10" Margin="0,0,0,12">
+                            <StackPanel>
+                                <CheckBox Content="Bật Smart Snippets (Bung khi nhấn Tab)" 
+                                          IsChecked="{Binding EnableSnippets, Mode=TwoWay}"
+                                          FontWeight="SemiBold" Margin="0,2,0,8"/>
+
+                                <CheckBox Content="Hiển thị Suggestion Popup khi gõ Snippet" 
+                                          IsChecked="{Binding EnableSnippetSuggestions, Mode=TwoWay}"
+                                          Margin="0,2,0,6"/>
+
+                                <Grid Margin="0,4,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="🎨 Snippet Theme (Giao diện):" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <ComboBox Grid.Column="1" ItemsSource="{Binding SnippetThemeOptions}" SelectedItem="{Binding SnippetTheme, Mode=TwoWay}" 
+                                              Height="24" VerticalContentAlignment="Center"/>
+                                </Grid>
+
+                                <TextBlock Text="💡 Phím tắt nhanh: Ctrl+Alt+S để tạo snippet từ vùng chọn" 
+                                           Foreground="#1E88E5" FontSize="11" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Header="Triggers &amp; Exclusions" Padding="10" Margin="0,0,0,12">
+                            <StackPanel TextBlock.FontSize="11" TextBlock.Foreground="#222222">
+                                <TextBlock Text="✔ Triggers: Space, Enter, Tab, Comma, Semicolon" Margin="0,2"/>
+                                <TextBlock Text="✔ Strict Exclusions (Bỏ qua an toàn):" FontWeight="SemiBold" Margin="0,3,0,2"/>
+                                <TextBlock Text="   • Chuỗi ký tự &amp; Dynamic SQL ('...', N'...')" Margin="0,1"/>
+                                <TextBlock Text="   • Comments (-- và /* ... */)" Margin="0,1"/>
+                                <TextBlock Text="   • Delimited identifiers ([...], &quot;...&quot;)" Margin="0,1"/>
+                                <TextBlock Text="⚡ Sử dụng ScriptDom Lexer hiệu năng cao" Margin="0,4,0,0" FontStyle="Italic" Foreground="#0277BD"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <Grid Margin="0,4,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="💾 Lưu Cài Đặt" Command="{Binding SaveSettingsCommand}" 
+                                    Height="32" FontWeight="SemiBold" Background="#1E88E5" Foreground="White"/>
+                            <Button Grid.Column="2" Content="🗑 Gỡ Cài Đặt Extension" Command="{Binding UninstallExtensionCommand}" 
+                                    Height="32" Padding="14,0" FontWeight="SemiBold" Background="#D32F2F" Foreground="White"
+                                    ToolTip="Gỡ bỏ hoàn toàn Lumi SQL Formatter và các extension cũ khỏi SSMS"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Right: Live Preview Panel -->
+                    <GroupBox Grid.Column="1" Header="Live Real-time Preview" Padding="8">
+                        <Grid>
+                            <TextBox Text="{Binding PreviewSql, Mode=OneWay}" 
+                                     IsReadOnly="True" 
+                                     FontFamily="Consolas, Courier New" 
+                                     FontSize="13" 
+                                     Background="#1E1E1E" 
+                                     Foreground="#D4D4D4"
+                                     AcceptsReturn="True" 
+                                     VerticalScrollBarVisibility="Auto" 
+                                     HorizontalScrollBarVisibility="Auto"
+                                     Padding="8"/>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 2: SNIPPET MANAGER -->
+            <TabItem Header="Snippet Manager">
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Row 0: Custom Snippets Directory Section -->
+                    <Border Grid.Row="0" Margin="0,0,0,10" Padding="8" Background="#F0F4F8" BorderBrush="#CFD8DC" BorderThickness="1" CornerRadius="4">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="📁 Thư mục Snippets:" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBox Grid.Column="1" Text="{Binding SnippetsDirectoryPath, Mode=OneWay}" IsReadOnly="True" 
+                                     Height="26" VerticalContentAlignment="Center" Background="White" Padding="6,2"/>
+                            <Button Grid.Column="2" Content="Browse..." Command="{Binding BrowseSnippetsFolderCommand}" Padding="10,4" Margin="6,0,0,0"/>
+                            <Button Grid.Column="3" Content="Mở thư mục" Command="{Binding OpenSnippetsFolderCommand}" Padding="10,4" Margin="4,0,0,0"/>
+                            <Button Grid.Column="4" Content="🔄 Refresh" Command="{Binding ReloadSnippetsCommand}" Padding="10,4" Margin="4,0,12,0" ToolTip="Đọc lại toàn bộ file snippet từ thư mục đã trỏ"/>
+                            
+                            <TextBlock Grid.Column="5" Text="🎨 Theme:" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <ComboBox Grid.Column="6" ItemsSource="{Binding SnippetThemeOptions}" SelectedItem="{Binding SnippetTheme, Mode=TwoWay}"
+                                      Height="26" VerticalContentAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Row 1: Actions Toolbar -->
+                    <DockPanel Grid.Row="1" Margin="0,0,0,10">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="➕ Thêm mới" Command="{Binding AddNewSnippetCommand}" Padding="10,4" Margin="0,0,6,0"/>
+                            <Button Content="🗑 Xóa" Command="{Binding DeleteSnippetCommand}" Padding="10,4" Margin="0,0,14,0"/>
+                            <Button Content="📥 Import JSON" Command="{Binding ImportSnippetsCommand}" Padding="10,4" Margin="0,0,6,0"/>
+                            <Button Content="📤 Export JSON" Command="{Binding ExportSnippetsCommand}" Padding="10,4"/>
+                        </StackPanel>
+                        <TextBlock Text="💡 Bôi đen code trong editor và nhấn Ctrl+Alt+S để tạo nhanh!" 
+                                   HorizontalAlignment="Right" VerticalAlignment="Center" 
+                                   Foreground="#0D47A1" FontWeight="Medium" FontSize="11"/>
+                    </DockPanel>
+
+                    <!-- Row 2: Snippets DataGrid (Restricted to 3 rows to optimize vertical space) -->
+                    <DataGrid x:Name="SnippetsGrid"
+                              Grid.Row="2" 
+                              ItemsSource="{Binding Snippets}" 
+                              SelectedItem="{Binding SelectedSnippet, Mode=TwoWay}"
+                              AutoGenerateColumns="False" 
+                              CanUserAddRows="False"
+                              CanUserSortColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              GridLinesVisibility="Horizontal"
+                              Height="108"
+                              RowHeight="26"
+                              ColumnHeaderHeight="28"
+                              VerticalScrollBarVisibility="Auto" 
+                              HorizontalScrollBarVisibility="Auto"
+                              Margin="0,0,0,10">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Prefix (Phím tắt)" Binding="{Binding Prefix}" Width="150" FontWeight="Bold"/>
+                            <DataGridTextColumn Header="Mô tả chức năng" Binding="{Binding Description}" Width="260"/>
+                            <DataGridTextColumn Header="Nội dung Body (Template)" Binding="{Binding Body}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Row 3: Snippet Detail Editor (Expands to fill vertical space) -->
+                    <GroupBox Grid.Row="3" Header="Trình Soạn Thảo Snippet Chi Tiết" Padding="10">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0" Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Prefix: " VerticalAlignment="Center" FontWeight="Medium" Margin="0,0,6,0"/>
+                                <TextBox x:Name="PrefixTextBox" Grid.Column="1" 
+                                         Text="{Binding EditingPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                         Height="26" VerticalContentAlignment="Center" FontWeight="Bold" Foreground="#1E88E5"
+                                         PreviewMouseLeftButtonDown="OnTextBoxPreviewMouseLeftButtonDown"
+                                         GotKeyboardFocus="OnTextBoxGotKeyboardFocus"/>
+
+                                <TextBlock Grid.Column="2" Text="Mô tả: " VerticalAlignment="Center" FontWeight="Medium" Margin="14,0,6,0"/>
+                                <TextBox x:Name="DescriptionTextBox" Grid.Column="3" 
+                                         Text="{Binding EditingDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                         Height="26" VerticalContentAlignment="Center"
+                                         PreviewMouseLeftButtonDown="OnTextBoxPreviewMouseLeftButtonDown"
+                                         GotKeyboardFocus="OnTextBoxGotKeyboardFocus"/>
+                            </Grid>
+
+                            <TextBox x:Name="TemplateTextBox" Grid.Row="1" 
+                                     Text="{Binding EditingTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                     FontFamily="Consolas, Courier New" FontSize="12"
+                                     AcceptsReturn="True" AcceptsTab="True"
+                                     VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                                     Background="{Binding SnippetEditorBackground}" Foreground="{Binding SnippetEditorForeground}"
+                                     Padding="6" Margin="0,0,0,6"
+                                     PreviewMouseLeftButtonDown="OnTextBoxPreviewMouseLeftButtonDown"
+                                     GotKeyboardFocus="OnTextBoxGotKeyboardFocus"/>
+
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="📍 Chèn $CURSOR$" Command="{Binding InsertCursorCommand}" Padding="10,4" Margin="0,0,10,0"/>
+                                <Button Content="💾 Lưu Snippet Này" Command="{Binding SaveCurrentSnippetCommand}" 
+                                        FontWeight="SemiBold" Background="#1E88E5" Foreground="White" Padding="16,4"/>
+                            </StackPanel>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- Status Bar -->
+        <StatusBar Grid.Row="2" Margin="0,6,0,0">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusMessage}" Foreground="#2E7D32" FontWeight="Medium"/>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</UserControl>

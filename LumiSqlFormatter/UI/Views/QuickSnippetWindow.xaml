@@ -1,0 +1,76 @@
+<Window x:Class="LumiSqlFormatter.UI.Views.QuickSnippetWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="⚡ Lumi SQL - Quick Create Snippet" 
+        Height="420" Width="600"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="ToolWindow"
+        ResizeMode="CanResizeWithGrip"
+        Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+        Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
+        FontFamily="Segoe UI" FontSize="12">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Margin="0,0,0,14" Padding="8,10" Background="#1E88E5" CornerRadius="4">
+            <TextBlock Text="⚡ Tạo nhanh Snippet từ Editor" FontWeight="SemiBold" FontSize="14" Foreground="White"/>
+        </Border>
+
+        <!-- Shortcut & Description Inputs -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="130"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Prefix (Phím tắt):" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <TextBox x:Name="ShortcutBox" Text="{Binding Prefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         Height="26" VerticalContentAlignment="Center" FontWeight="Bold" Foreground="#1E88E5"
+                         ToolTip="Tiền tố / phím tắt khi gõ trong editor (vd: adrop, ss, ct)"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="Mô tả (Description):" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <TextBox Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         Height="26" VerticalContentAlignment="Center"
+                         ToolTip="Mô tả chức năng snippet"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Template Text Editor -->
+        <DockPanel Grid.Row="2" Margin="0,0,0,10">
+            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+                <TextBlock Text="Body (Code Template):" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <Button Content="📍 Chèn $CURSOR$" Command="{Binding InsertCursorCommand}" 
+                        HorizontalAlignment="Right" Padding="8,2" FontSize="11"/>
+            </DockPanel>
+
+            <TextBox Text="{Binding Body, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     FontFamily="Consolas, Courier New" FontSize="13"
+                     AcceptsReturn="True" AcceptsTab="True"
+                     VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                     Background="{Binding EditorBackground}" Foreground="{Binding EditorForeground}" Padding="6"/>
+        </DockPanel>
+
+        <!-- Status Message -->
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="#D32F2F" FontWeight="Medium" Margin="0,0,0,8"/>
+
+        <!-- Action Buttons -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Hủy (Esc)" Command="{Binding CancelCommand}" Width="80" Height="28" Margin="0,0,10,0"/>
+            <Button Content="💾 Lưu Snippet (Enter)" Command="{Binding SaveCommand}" 
+                    Width="140" Height="28" FontWeight="SemiBold" Background="#1E88E5" Foreground="White"
+                    IsDefault="True"/>
+        </StackPanel>
+    </Grid>
+</Window>
